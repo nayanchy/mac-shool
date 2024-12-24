@@ -37,7 +37,7 @@ const StudentForm = dynamic(() => import("./forms/StudentForm"), {
 const SubjectForm = dynamic(() => import("./forms/SubjectForm"), {
   loading: () => <Spinner />,
 });
-const FormModal = ({ table, type, data, id }: FormModalTypes) => {
+const FormModal = ({ table, type, data, id, relatedData }: FormModalTypes) => {
   const { toast } = useToast();
   const router = useRouter();
   const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
@@ -99,7 +99,7 @@ const FormModal = ({ table, type, data, id }: FormModalTypes) => {
         type={type}
         data={data}
         handleModal={handleClick}
-        // relatedData={relatedData}
+        relatedData={relatedData}
       />
     ),
   };

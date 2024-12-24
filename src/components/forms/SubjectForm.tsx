@@ -15,10 +15,12 @@ const SubjectForm = ({
   type,
   data,
   handleModal,
+  relatedData,
 }: {
   type: "create" | "update" | "delete";
   data?: any;
   handleModal: () => void;
+  relatedData?: any;
 }) => {
   const { toast } = useToast();
   const router = useRouter();
