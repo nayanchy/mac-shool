@@ -9,8 +9,7 @@ import { Form } from "../ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { createSubject } from "@/lib/actions";
 import { useRouter } from "next/navigation";
-import { useFormState } from "react-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const SubjectForm = ({
   type,
@@ -42,7 +41,12 @@ const SubjectForm = ({
 
       if (result.success) {
         toast({
-          title: "New Subject Created",
+          title:
+            type === "create"
+              ? "New Subject Created"
+              : type === "update"
+              ? "The subject is updated"
+              : "",
         });
         handleModal();
         router.refresh();
