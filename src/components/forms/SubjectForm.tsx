@@ -87,6 +87,17 @@ const SubjectForm = ({
                 defaultValue={data?.name}
               />
             </div>
+            {type === "update" && (
+              <div className="hidden">
+                <CustomFormField
+                  control={form.control}
+                  name="id"
+                  label="ID"
+                  placeholder="ID"
+                  defaultValue={data?.id}
+                />
+              </div>
+            )}
           </div>
         </div>
 
