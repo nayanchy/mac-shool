@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { createSubject } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import { useFormState } from "react-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const SubjectForm = ({
   type,
@@ -23,31 +23,47 @@ const SubjectForm = ({
 }) => {
   const { toast } = useToast();
   const router = useRouter();
-  const [state, formAction] = useFormState(createSubject, {
-    success: false,
-    error: false,
-  });
-  const parsedBirthday = data?.birthday ? new Date(data.birthday) : null;
+
   const form = useForm<SubjectSchema>({
     resolver: zodResolver(subjectFormSchema),
     defaultValues: {
       ...data,
-      birthday: parsedBirthday,
     },
   });
+  const [state, setState] = useState({
+    success: false,
+    error: false,
+  });
 
-  const onSubmit = (values: SubjectSchema) => {
-    toast({
-      title: "New Subject Created",
-    });
-    formAction(values);
-    router.refresh();
-    handleModal();
+  const onSubmit = async (values: SubjectSchema) => {
+    try {
+      const result = await createSubject(state, values);
+      setState(result);
+
+      if (result.success) {
+        toast({
+          title: "New Subject Created",
+        });
+        handleModal();
+        router.refresh();
+      }
+
+      if (result.error) {
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred",
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+    }
   };
-
-  useEffect(() => {
-    console.log(state);
-  }, [state]);
 
   return (
     <Form {...form}>
