@@ -9,20 +9,21 @@ import { deleteSubject } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { FormModalTypes } from "@/lib/types";
+import { SubjectSchema } from "@/lib/utility";
 
 const deleteActionMap = {
   subject: deleteSubject,
-  // class: deleteClass,
-  // teacher: deleteTeacher,
-  // student: deleteStudent,
-  // parent: deleteParent,
-  // exam: deleteExam,
-  // assignment: deleteAssignment,
-  // result: deleteResult,
-  // attendance: deleteAttendance,
-  // event: deleteEvent,
-  // announcement: deleteAnnouncement,
-  // lesson: deleteLesson,
+  class: deleteSubject,
+  teacher: deleteSubject,
+  student: deleteSubject,
+  parent: deleteSubject,
+  exam: deleteSubject,
+  assignment: deleteSubject,
+  result: deleteSubject,
+  attendance: deleteSubject,
+  event: deleteSubject,
+  announcement: deleteSubject,
+  lesson: deleteSubject,
 };
 
 const TeacherForm = dynamic(() => import("./forms/TeacherForm"), {
@@ -37,6 +38,8 @@ const SubjectForm = dynamic(() => import("./forms/SubjectForm"), {
   loading: () => <Spinner />,
 });
 const FormModal = ({ table, type, data, id }: FormModalTypes) => {
+  const { toast } = useToast();
+  const router = useRouter();
   const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
   const bgColor =
     type === "create"
@@ -101,25 +104,55 @@ const FormModal = ({ table, type, data, id }: FormModalTypes) => {
     ),
   };
   const Form = () => {
-    // const [state, formAction] = useFormState(deleteActionMap[table], {
-    //   success: false,
-    //   error: false,
-    // });
+    const [state, formAction] = useFormState(deleteActionMap[table], {
+      success: false,
+      error: false,
+    });
 
-    // const router = useRouter();
-    // const { toast } = useToast();
+    const router = useRouter();
+    const { toast } = useToast();
 
-    // useEffect(() => {
-    //   if (state.success) {
-    //     toast({
-    //       title: `The ${table} was successfully deleted`,
-    //     });
-    //     router.refresh();
+    useEffect(() => {
+      if (state.success) {
+        toast({
+          title: `The ${table} was successfully deleted`,
+        });
+        router.refresh();
+      }
+      if (state.error) {
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred",
+          variant: "destructive",
+        });
+      }
+    }, [state, router, toast]);
+
+    // const [state, setState] = useState({ success: false, error: false });
+    // const handleSubmit = async (values: { id: number | string }) => {
+    //   try {
+    //     const result = await deleteActionMap[table](state, values);
+    //     console.log(result);
+    //     setState(result);
+    //     if (result.success) {
+    //       toast({
+    //         title: `The ${table} was successfully deleted`,
+    //       });
+    //     }
+    //     if (result.error) {
+    //       toast({
+    //         title: "Error",
+    //         description: "An unexpected error occurred",
+    //         variant: "destructive",
+    //       });
+    //     }
+    //   } catch (err) {
+    //     console.error(err);
     //   }
-    // }, [state, router, toast]);
+    // };
 
     return type === "delete" && id ? (
-      <form className="p-4 flex flex-col gap-4">
+      <form className="p-4 flex flex-col gap-4" action={formAction}>
         <input type="text | number" name="id" value={id} hidden />
         <span className="text-center font-medium text-sm">
           All data will be deleted. Are you sure you want to delete the item?
