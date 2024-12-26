@@ -46,10 +46,18 @@ export const formSchema = z.object({
 export const subjectFormSchema = z.object({
   id: z.coerce.number().optional(),
   name: z.string().min(1, { message: "Subject name is required!" }),
-  // teachers: z.array(z.string()),
+  teachers: z.array(z.string()),
 });
 
 export type SubjectSchema = z.infer<typeof subjectFormSchema>;
+
+export const classFormSchema = z.object({
+  id: z.coerce.number().optional(),
+  name: z.string().min(1, { message: "Subject name is required!" }),
+  teacher: z.string(),
+});
+
+export type ClassSchema = z.infer<typeof classFormSchema>;
 /**
  * Formats a given Date object into a string representation in the format "h:mm a".
  *
@@ -87,6 +95,16 @@ export const getCount = (data: dataType, type: string) => {
   return { singleCount, percentage };
 };
 
+/**
+ * Gets the start and end dates of the current week.
+ *
+ * The start date is Monday of the current week, and the end date is Friday of the
+ * current week. The dates are returned in the format of a Date object.
+ *
+ * @returns An object with two properties: `startOfWeek` and `endOfWeek`. `startOfWeek`
+ * is the start date of the current week, and `endOfWeek` is the end date of the current
+ * week.
+ */
 const currentWorkWeek = () => {
   const today = new Date();
   const dayOfWeek = today.getDay();
@@ -111,6 +129,21 @@ const currentWorkWeek = () => {
   return { startOfWeek, endOfWeek };
 };
 
+/**
+ * Adjusts a list of lessons to the current week.
+ *
+ * This function takes a list of lessons in the format of an array of objects with
+ * `title`, `start`, and `end` properties. The `start` and `end` properties must be
+ * Date objects. The function returns a new array of lessons where the `start` and
+ * `end` dates have been adjusted to the current week.
+ *
+ * The function works by finding the start of the current week (Monday), and then
+ * adjusting the `start` and `end` dates of each lesson to the corresponding day of
+ * the week. The time of day is preserved, but the date is changed.
+ *
+ * @param lessons The list of lessons to adjust.
+ * @returns The adjusted list of lessons.
+ */
 export const adjustScheduleToCurrentWeek = (
   lessons: { title: string; start: Date; end: Date }[]
 ): { title: string; start: Date; end: Date }[] => {

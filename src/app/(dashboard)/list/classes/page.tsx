@@ -1,4 +1,5 @@
 import FormModal from "@/components/FormModal";
+import FormContainer from "@/components/forms/FormContainer";
 import IconButton from "@/components/IconButton";
 import Pagination from "@/components/Pagination";
 import SearchBar from "@/components/SearchBar";
@@ -71,7 +72,7 @@ const ClassesListPage = async ({
       accessor: "supervisor",
       className: "hidden lg:table-cell",
     },
-    role === "admin" && { header: "Actions", accessor: "actions" },
+    ...(role === "admin" ? [{ header: "Actions", accessor: "actions" }] : []),
   ];
 
   const renderRow = (item: ClassesList) => {
@@ -92,13 +93,13 @@ const ClassesListPage = async ({
           <div className="flex items-center gap-2">
             {role === "admin" && (
               <>
-                <FormModal
+                <FormContainer
                   type="update"
                   table="class"
                   data={item}
                   id={item.id}
                 />
-                <FormModal type="delete" table="class" id={item.id} />
+                <FormContainer type="delete" table="class" id={item.id} />
               </>
             )}
           </div>

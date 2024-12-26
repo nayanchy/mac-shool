@@ -1,4 +1,5 @@
 import FormModal from "@/components/FormModal";
+import FormContainer from "@/components/forms/FormContainer";
 import IconButton from "@/components/IconButton";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
@@ -120,7 +121,7 @@ const StudentListPage = async ({
             </Link>
             {role === "admin" && (
               <>
-                <FormModal type="delete" table="student" id={item.id} />
+                <FormContainer type="delete" table="class" id={item.id} />
               </>
             )}
           </div>
@@ -139,7 +140,7 @@ const StudentListPage = async ({
           <div className="flex gap-2 items-center self-end">
             <IconButton src="/filter.png" alt="filter" />
             <IconButton src="/sort.png" alt="sort" />
-            {role === "admin" && <FormModal type="create" table="student" />}
+            {role === "admin" && <FormContainer type="create" table="class" />}
           </div>
         </div>
       </div>
