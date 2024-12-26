@@ -5,15 +5,14 @@ import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Spinner from "./Spinner";
 import { useFormState } from "react-dom";
-import { deleteSubject } from "@/lib/actions";
+import { deleteClass, deleteSubject } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { FormModalTypes } from "@/lib/types";
-import { SubjectSchema } from "@/lib/utility";
 
 const deleteActionMap = {
   subject: deleteSubject,
-  class: deleteSubject,
+  class: deleteClass,
   teacher: deleteSubject,
   student: deleteSubject,
   parent: deleteSubject,
@@ -37,7 +36,11 @@ const StudentForm = dynamic(() => import("./forms/StudentForm"), {
 const SubjectForm = dynamic(() => import("./forms/SubjectForm"), {
   loading: () => <Spinner />,
 });
-const FormModal = ({ table, type, data, id }: FormModalTypes) => {
+
+const ClassForm = dynamic(() => import("./forms/ClassForm"), {
+  loading: () => <Spinner />,
+});
+const FormModal = ({ table, type, data, id, relatedData }: FormModalTypes) => {
   const { toast } = useToast();
   const router = useRouter();
   const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
@@ -99,7 +102,15 @@ const FormModal = ({ table, type, data, id }: FormModalTypes) => {
         type={type}
         data={data}
         handleModal={handleClick}
-        // relatedData={relatedData}
+        relatedData={relatedData}
+      />
+    ),
+    class: (type, data, handleModal, relatedData) => (
+      <ClassForm
+        type={type}
+        data={data}
+        handleModal={handleClick}
+        relatedData={relatedData}
       />
     ),
   };
@@ -128,29 +139,6 @@ const FormModal = ({ table, type, data, id }: FormModalTypes) => {
       }
     }, [state, router, toast]);
 
-    // const [state, setState] = useState({ success: false, error: false });
-    // const handleSubmit = async (values: { id: number | string }) => {
-    //   try {
-    //     const result = await deleteActionMap[table](state, values);
-    //     console.log(result);
-    //     setState(result);
-    //     if (result.success) {
-    //       toast({
-    //         title: `The ${table} was successfully deleted`,
-    //       });
-    //     }
-    //     if (result.error) {
-    //       toast({
-    //         title: "Error",
-    //         description: "An unexpected error occurred",
-    //         variant: "destructive",
-    //       });
-    //     }
-    //   } catch (err) {
-    //     console.error(err);
-    //   }
-    // };
-
     return type === "delete" && id ? (
       <form className="p-4 flex flex-col gap-4" action={formAction}>
         <input type="text | number" name="id" value={id} hidden />
@@ -165,7 +153,7 @@ const FormModal = ({ table, type, data, id }: FormModalTypes) => {
         </button>
       </form>
     ) : type === "update" || type === "create" ? (
-      forms[table](type, data, handleClick)
+      forms[table](type, data, handleClick, relatedData)
     ) : (
       "Forms are not created yet"
     );

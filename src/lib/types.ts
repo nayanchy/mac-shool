@@ -15,7 +15,7 @@ export type FormModalTypes = {
   type: "create" | "update" | "delete";
   data?: any;
   id?: number | string;
-  relatedData: {};
+  relatedData?: any;
 };
 
 export type FormDefaultProps = {

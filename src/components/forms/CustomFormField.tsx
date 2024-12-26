@@ -23,15 +23,22 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "../ui/calendar";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { Checkbox } from "../ui/checkbox";
+type OptionSubjectForm = {
+  id: string | number;
+  name: string;
+  surname: string;
+};
 type CustomFormFieldProps<TFieldValues extends FieldValues> = {
   name: Path<TFieldValues>; // Ensures the name matches the schema keys
   label: string;
   placeholder: string;
   type?: string; // Optional to make it more versatile
   control: Control<TFieldValues, any>;
-  options?: string[];
+  options?: any[] | OptionSubjectForm[];
   defaultValue?: string;
   hidden?: boolean;
+  table?: string;
 };
 
 const CustomFormField = <TFieldValues extends FieldValues>({
@@ -43,6 +50,7 @@ const CustomFormField = <TFieldValues extends FieldValues>({
   options, // Default type is "text"
   defaultValue,
   hidden,
+  table,
 }: CustomFormFieldProps<TFieldValues>) => {
   if (
     type === "text" ||
@@ -85,13 +93,66 @@ const CustomFormField = <TFieldValues extends FieldValues>({
                 <SelectValue placeholder={placeholder} />
               </SelectTrigger>
               <SelectContent>
-                {options?.map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {option[0].toUpperCase() + option.slice(1)}
-                  </SelectItem>
-                ))}
+                {table === "subject" &&
+                  options?.map((option) => (
+                    <SelectItem key={option.id} value={option.id}>
+                      {/* {option[0].toUpperCase() + option.slice(1)} */}
+                      {`${option.name} ${option.surname}`}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    );
+  }
+
+  if (type == "checkbox") {
+    return (
+      <FormField
+        control={control}
+        name={name}
+        render={() => (
+          <FormItem>
+            <div className="mb-4">
+              <FormLabel>{label}</FormLabel>
+            </div>
+            {options?.map((option) => (
+              <FormField
+                key={option.id}
+                control={control}
+                name={name}
+                render={({ field }) => {
+                  return (
+                    <FormItem
+                      key={option.id}
+                      className="flex flex-row items-start space-x-3 space-y-0"
+                    >
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value?.includes(option.id)}
+                          onCheckedChange={(checked) => {
+                            return checked
+                              ? field.onChange([...field.value, option.id])
+                              : field.onChange(
+                                  field.value?.filter(
+                                    (value) => value !== option.id
+                                  )
+                                ); // Update the field with the selected options</FormControl>)
+                          }}
+                        ></Checkbox>
+                      </FormControl>
+                      <FormLabel className="font-normal">
+                        {option.name}
+                      </FormLabel>
+                    </FormItem>
+                  );
+                }}
+              />
+            ))}
+            <FormMessage />
           </FormItem>
         )}
       />
