@@ -1,6 +1,6 @@
 "user client";
 
-import { formSchema } from "@/lib/utility";
+import { formSchema, TeacherSchema } from "@/lib/utility";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -29,7 +29,7 @@ const TeacherForm = ({
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: TeacherSchema) => {
     toast({
       title: "New Teacher has been created",
       description: (

@@ -43,6 +43,35 @@ export const formSchema = z.object({
   //   .nullable(), // Make img optional for now
 });
 
+export const teacherformSchema = z.object({
+  id: z.string().optional(),
+  username: z
+    .string()
+    .min(3, { message: "Username must be at least 3 characters long" })
+    .max(100, { message: "Username can be at most 100 characters long" }),
+  email: z
+    .string()
+    .email({ message: "Invalid email address" })
+    .optional()
+    .or(z.literal("")),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters long" }),
+  firstName: z
+    .string()
+    .min(1, { message: "First name is required" })
+    .optional(),
+  lastName: z.string().min(1, { message: "Last name is required" }).optional(),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+  bloodGroup: z.string().min(1, { message: "Blood group is required" }),
+  birthday: z.string({ message: "A date of birth is required." }),
+  sex: z.enum(["MALE", "FEMALE"], { message: "Sex is required" }),
+  img: z.instanceof(File, { message: "Image is required" }).optional(), // Make img optional for now
+});
+
+export type TeacherSchema = z.infer<typeof teacherformSchema>;
+
 export const subjectFormSchema = z.object({
   id: z.coerce.number().optional(),
   name: z.string().min(1, { message: "Subject name is required!" }),
@@ -53,8 +82,19 @@ export type SubjectSchema = z.infer<typeof subjectFormSchema>;
 
 export const classFormSchema = z.object({
   id: z.coerce.number().optional(),
-  name: z.string().min(1, { message: "Subject name is required!" }),
-  teacher: z.string(),
+  name: z
+    .string({ required_error: "Subject name is required!" })
+    .min(1, { message: "Subject name is required!" }),
+  capacity: z.coerce
+    .number({ required_error: "Capacity is required" })
+    .min(1, { message: "The class capacity must be at least 1" }),
+  gradeId: z.coerce
+    .number({ required_error: "Grade is required" })
+    .min(1, { message: "Enter a valid gradeId" }),
+  supervisorId: z
+    .string({ required_error: "Supervisor is required" })
+    .min(1, { message: "Enter a valid supervisorId" })
+    .optional(),
 });
 
 export type ClassSchema = z.infer<typeof classFormSchema>;

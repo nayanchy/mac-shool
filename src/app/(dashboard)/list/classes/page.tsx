@@ -93,12 +93,7 @@ const ClassesListPage = async ({
           <div className="flex items-center gap-2">
             {role === "admin" && (
               <>
-                <FormContainer
-                  type="update"
-                  table="class"
-                  data={item}
-                  id={item.id}
-                />
+                <FormContainer type="update" table="class" data={item} />
                 <FormContainer type="delete" table="class" id={item.id} />
               </>
             )}
@@ -117,7 +112,7 @@ const ClassesListPage = async ({
           <div className="flex gap-2 items-center self-end">
             <IconButton src="/filter.png" alt="filter" />
             <IconButton src="/sort.png" alt="sort" />
-            <FormModal type="create" table="class" />
+            <FormContainer type="create" table="class" />
           </div>
         </div>
       </div>

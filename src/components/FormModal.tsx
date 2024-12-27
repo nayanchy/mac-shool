@@ -81,22 +81,22 @@ const FormModal = ({ table, type, data, id, relatedData }: FormModalTypes) => {
       relatedData?: any
     ) => JSX.Element;
   } = {
-    teacher: (type, data, handleModal, relatedData) => (
-      <TeacherForm
-        type={type}
-        data={data}
-        handleModal={handleClick}
-        // relatedData={relatedData}
-      />
-    ),
-    student: (type, data, handleModal, relatedData) => (
-      <StudentForm
-        type={type}
-        data={data}
-        handleModal={handleClick}
-        // relatedData={relatedData}
-      />
-    ),
+    // teacher: (type, data, handleModal, relatedData) => (
+    //   <TeacherForm
+    //     type={type}
+    //     data={data}
+    //     handleModal={handleClick}
+    //     // relatedData={relatedData}
+    //   />
+    // ),
+    // student: (type, data, handleModal, relatedData) => (
+    //   <StudentForm
+    //     type={type}
+    //     data={data}
+    //     handleModal={handleClick}
+    //     // relatedData={relatedData}
+    //   />
+    // ),
     subject: (type, data, handleModal, relatedData) => (
       <SubjectForm
         type={type}

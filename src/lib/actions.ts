@@ -108,14 +108,8 @@ export const createClass = async (
   let state = { success: false, error: false };
   try {
     await prisma.class.create({
-      data: {
-        name: data.name,
-        // teacher: {
-        //   connect: { id: data.teacher },
-        // },
-      },
+      data,
     });
-
     return (state = {
       success: true,
       error: false,
@@ -135,9 +129,7 @@ export const updateClass = async (
       where: {
         id: data.id,
       },
-      data: {
-        name: data.name,
-      },
+      data,
     });
 
     return {
