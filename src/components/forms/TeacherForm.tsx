@@ -1,43 +1,86 @@
 "user client";
 
-import { formSchema, TeacherSchema } from "@/lib/utility";
+import { teacherformSchema, TeacherSchema } from "@/lib/utility";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "../ui/button";
 import CustomFormField from "./CustomFormField";
-import { Form } from "../ui/form";
+import { Form, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { DatePicker } from "../ui/DatePicker";
-
+import { Checkbox } from "../ui/checkbox";
+import { useState } from "react";
+import { createTeacher, updateTeacher } from "@/lib/actions";
+import { useRouter } from "next/navigation";
+import { CldUploadWidget } from "next-cloudinary";
+import { ImageIcon } from "lucide-react";
+import Image from "next/image";
+import { clerkClient } from "@clerk/nextjs/server";
 const TeacherForm = ({
   type,
   data,
   handleModal,
+  relatedData,
 }: {
   type: "create" | "update" | "delete";
   data?: any;
   handleModal: () => void;
+  relatedData?: any;
 }) => {
+  const router = useRouter();
+  const [state, setState] = useState({
+    success: false,
+    error: false,
+  });
+  const [img, setImg] = useState<any>();
   const { toast } = useToast();
   const parsedBirthday = data?.birthday ? new Date(data.birthday) : null;
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<TeacherSchema>({
+    resolver: zodResolver(teacherformSchema),
     defaultValues: {
       ...data,
-      birthday: parsedBirthday,
     },
   });
 
-  const onSubmit = (values: TeacherSchema) => {
-    toast({
-      title: "New Teacher has been created",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      ),
-    });
+  const onSubmit = async (values: TeacherSchema) => {
+    try {
+      const formattedSubjects = values.subjects?.map((id) => parseInt(id, 10));
+      const formattedClasses = values.classes?.map((id) => parseInt(id, 10));
+
+      const formattedValues = {
+        ...values,
+        subjects: formattedSubjects,
+        classes: formattedClasses,
+      };
+      const result =
+        type === "create"
+          ? createTeacher(state, formattedValues)
+          : updateTeacher(state, formattedValues);
+      setState(await result);
+
+      toast({
+        title: "New Teacher has been created",
+        description: (
+          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <code className="text-white">
+              {JSON.stringify(values, null, 2)}
+            </code>
+          </pre>
+        ),
+      });
+      router.refresh();
+    } catch (err) {
+      console.error(err);
+      form.setError("root", {
+        type: "server",
+        message: "An unexpected error occurred",
+      });
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+    }
 
     handleModal();
   };
@@ -54,7 +97,17 @@ const TeacherForm = ({
             Authentication Information
           </span>
           <div className="flex flex-col md:flex-row gap-2 w-full ">
-            <div className="flex-1">
+            <div className="flex-1 w-1/2">
+              <CustomFormField
+                control={form.control}
+                name="id"
+                label="ID"
+                placeholder="ID"
+                defaultValue={data?.id}
+              />
+            </div>
+
+            <div className="flex-1  w-1/2">
               <CustomFormField
                 control={form.control}
                 name="username"
@@ -63,7 +116,9 @@ const TeacherForm = ({
                 defaultValue={data?.username}
               />
             </div>
-            <div className="flex-1">
+          </div>
+          <div className="flex flex-col md:flex-row gap-2 w-full ">
+            <div className="flex-1 w-1/2">
               <CustomFormField
                 control={form.control}
                 name="email"
@@ -73,7 +128,7 @@ const TeacherForm = ({
                 defaultValue={data?.email}
               />
             </div>
-            <div className="flex-1">
+            <div className="flex-1 w-1/2">
               <CustomFormField
                 control={form.control}
                 name="password"
@@ -85,6 +140,95 @@ const TeacherForm = ({
             </div>
           </div>
           <span className="text-xs text-gray-400 font-medium text-center py-6">
+            Subject and Class Selection
+          </span>
+          <div className="flex flex-col gap-2 w-full">
+            <div className="flex flex-col md:flex-row gap-2 w-full">
+              <FormField
+                control={form.control}
+                name="subjects"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Assign Subjects to the teacher</FormLabel>
+                    <div className="grid grid-cols-4 gap-y-2 gap-x-4">
+                      {relatedData?.subjects.map(
+                        (option: { id: number; name: string }) => (
+                          <div
+                            key={option.id}
+                            className="flex items-center space-x-3"
+                          >
+                            <Checkbox
+                              id={`subject-${option.id}`}
+                              checked={
+                                field.value?.includes(String(option.id)) ||
+                                false
+                              }
+                              onCheckedChange={(checked) => {
+                                const updatedValue = checked
+                                  ? [...(field.value || []), String(option.id)]
+                                  : field.value?.filter(
+                                      (id) => id !== String(option.id)
+                                    ) || [];
+                                field.onChange(updatedValue);
+                              }}
+                            />
+
+                            <label htmlFor={`subject-${option.id}`}>
+                              {option.name}
+                            </label>
+                          </div>
+                        )
+                      )}
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex flex-col">
+              <FormField
+                control={form.control}
+                name="classes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Assign Subjects to the teacher</FormLabel>
+                    <div className="grid grid-cols-4 gap-y-2 gap-x-4">
+                      {relatedData?.classes.map(
+                        (option: { id: number; name: string }) => (
+                          <div
+                            key={option.id}
+                            className="flex items-center space-x-3"
+                          >
+                            <Checkbox
+                              id={`classes-${option.id}`}
+                              checked={
+                                field.value?.includes(String(option.id)) ||
+                                false
+                              }
+                              onCheckedChange={(checked) => {
+                                const updatedValue = checked
+                                  ? [...(field.value || []), String(option.id)]
+                                  : field.value?.filter(
+                                      (id) => id !== String(option.id)
+                                    ) || [];
+                                field.onChange(updatedValue);
+                              }}
+                            />
+
+                            <label htmlFor={`subject-${option.id}`}>
+                              {option.name}
+                            </label>
+                          </div>
+                        )
+                      )}
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+          <span className="text-xs text-gray-400 font-medium text-center py-6">
             Personal Information
           </span>
           <div className="flex flex-col gap-2 w-full">
@@ -92,7 +236,7 @@ const TeacherForm = ({
               <div className="flex-1">
                 <CustomFormField
                   control={form.control}
-                  name="firstName"
+                  name="name"
                   label="First Name"
                   placeholder="First Name"
                   type="text"
@@ -102,7 +246,7 @@ const TeacherForm = ({
               <div className="flex-1">
                 <CustomFormField
                   control={form.control}
-                  name="lastName"
+                  name="surname"
                   label="Last Name"
                   placeholder="Last Name"
                   type="text"
@@ -134,11 +278,11 @@ const TeacherForm = ({
               <div className="flex-1">
                 <CustomFormField
                   control={form.control}
-                  name="bloodGroup"
+                  name="bloodgroup"
                   label="Blood Group"
                   placeholder="Blood Group"
                   type="text"
-                  defaultValue={data?.bloodGroup}
+                  defaultValue={data?.bloodgroup}
                 />
               </div>
               <div className="flex-1">
@@ -157,18 +301,36 @@ const TeacherForm = ({
                   label="Sex"
                   placeholder="Sex"
                   type="select"
-                  options={["male", "female"]}
+                  options={["MALE", "FEMALE"]}
                 />
               </div>
               <div className="flex-1"></div>
-              <div className="flex-1">
-                <CustomFormField
-                  control={form.control}
-                  name="img"
-                  label="Profile Picture"
-                  placeholder="Profile Picture"
-                  type="file"
-                />
+              <div className="flex-1 self-end">
+                {img && (
+                  <Image
+                    src={img.thumbnail_url}
+                    alt="profile"
+                    width={100}
+                    height={100}
+                    className="object-cover text-center"
+                  />
+                )}
+                <CldUploadWidget
+                  uploadPreset="schoolDashboard"
+                  onSuccess={(result, widget) => {
+                    setImg(result.info);
+                    console.log(result.info);
+                    widget.close();
+                  }}
+                >
+                  {({ open }) => {
+                    return (
+                      <Button onClick={() => open()} className="w-full">
+                        <ImageIcon /> Upload Profile Picture
+                      </Button>
+                    );
+                  }}
+                </CldUploadWidget>
               </div>
             </div>
           </div>

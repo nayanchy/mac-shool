@@ -4,7 +4,8 @@ import { hostname } from 'os';
 const nextConfig = {
     images: {
         remotePatterns: [
-            {hostname: "images.pexels.com"}
+            {hostname: "images.pexels.com"},
+            {hostname: "res.cloudinary.com"},
         ]
     }
 };

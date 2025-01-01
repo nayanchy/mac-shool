@@ -57,17 +57,16 @@ export const teacherformSchema = z.object({
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters long" }),
-  firstName: z
-    .string()
-    .min(1, { message: "First name is required" })
-    .optional(),
-  lastName: z.string().min(1, { message: "Last name is required" }).optional(),
+  name: z.string().min(1, { message: "First name is required" }).optional(),
+  surname: z.string().min(1, { message: "Last name is required" }).optional(),
   phone: z.string().optional(),
-  address: z.string().optional(),
-  bloodGroup: z.string().min(1, { message: "Blood group is required" }),
+  address: z.string(),
+  bloodgroup: z.string().min(1, { message: "Blood group is required" }),
   birthday: z.string({ message: "A date of birth is required." }),
   sex: z.enum(["MALE", "FEMALE"], { message: "Sex is required" }),
-  img: z.instanceof(File, { message: "Image is required" }).optional(), // Make img optional for now
+  img: z.string().optional(), // Make img optional for now
+  subjects: z.array(z.string()),
+  classes: z.array(z.string()),
 });
 
 export type TeacherSchema = z.infer<typeof teacherformSchema>;

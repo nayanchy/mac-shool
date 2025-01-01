@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Spinner from "./Spinner";
 import { useFormState } from "react-dom";
-import { deleteClass, deleteSubject } from "@/lib/actions";
+import { deleteClass, deleteSubject, deleteTeacher } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { FormModalTypes } from "@/lib/types";
@@ -13,7 +13,7 @@ import { FormModalTypes } from "@/lib/types";
 const deleteActionMap = {
   subject: deleteSubject,
   class: deleteClass,
-  teacher: deleteSubject,
+  teacher: deleteTeacher,
   student: deleteSubject,
   parent: deleteSubject,
   exam: deleteSubject,
@@ -81,14 +81,14 @@ const FormModal = ({ table, type, data, id, relatedData }: FormModalTypes) => {
       relatedData?: any
     ) => JSX.Element;
   } = {
-    // teacher: (type, data, handleModal, relatedData) => (
-    //   <TeacherForm
-    //     type={type}
-    //     data={data}
-    //     handleModal={handleClick}
-    //     // relatedData={relatedData}
-    //   />
-    // ),
+    teacher: (type, data, handleModal, relatedData) => (
+      <TeacherForm
+        type={type}
+        data={data}
+        handleModal={handleClick}
+        relatedData={relatedData}
+      />
+    ),
     // student: (type, data, handleModal, relatedData) => (
     //   <StudentForm
     //     type={type}

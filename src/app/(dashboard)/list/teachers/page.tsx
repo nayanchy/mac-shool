@@ -1,4 +1,5 @@
 import FormModal from "@/components/FormModal";
+import FormContainer from "@/components/forms/FormContainer";
 import IconButton from "@/components/IconButton";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
@@ -18,7 +19,7 @@ const TeacherListPage = async ({
 }: {
   searchParams: { [key: string]: string } | undefined;
 }) => {
-  const { page, ...queryParams } = searchParams;
+  const { page, ...queryParams } = searchParams ?? {};
 
   const p = page ? parseInt(page) : 1;
 
@@ -133,7 +134,7 @@ const TeacherListPage = async ({
               </button>
             </Link>
             {role === "admin" && (
-              <FormModal type="delete" table="teacher" id={item.id} />
+              <FormContainer type="delete" table="teacher" id={item.id} />
             )}
           </div>
         </td>
@@ -151,7 +152,11 @@ const TeacherListPage = async ({
           <div className="flex gap-2 items-center self-end">
             <IconButton src="/filter.png" alt="filter" />
             <IconButton src="/sort.png" alt="sort" />
-            {role === "admin" && <FormModal type="create" table="teacher" />}
+            {role === "admin" && (
+              <>
+                <FormContainer type="create" table="teacher" />
+              </>
+            )}
           </div>
         </div>
       </div>

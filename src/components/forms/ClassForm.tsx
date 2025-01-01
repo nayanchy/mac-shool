@@ -10,7 +10,6 @@ import { useToast } from "@/hooks/use-toast";
 import { createClass, updateClass } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Checkbox } from "../ui/checkbox";
 import {
   Select,
   SelectContent,

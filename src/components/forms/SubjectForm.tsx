@@ -129,7 +129,7 @@ const SubjectForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Teachers</FormLabel>
-                  <div className="space-y-2">
+                  <div className="grid grid-cols-3 gap-x-4 gap-y-2">
                     {options.map(
                       (option: {
                         id: Key | null | undefined;
