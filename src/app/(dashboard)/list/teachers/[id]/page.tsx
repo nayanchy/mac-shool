@@ -14,11 +14,17 @@ const SingleTeacherPage = async ({ params }: { params: { id: string } }) => {
       id: params.id,
     },
     include: {
+      _count: {
+        select: {
+          subjects: true,
+          lessons: true,
+          classes: true,
+        },
+      },
       subjects: true,
       classes: true,
     },
   });
-  console.log(teacher);
   return (
     <div className="flex-1 p-4 flex flex-col xl:flex-row gap-4">
       {/* Left */}
@@ -38,20 +44,20 @@ const SingleTeacherPage = async ({ params }: { params: { id: string } }) => {
             <InfoCards
               image="/singleBranch.png"
               alt="branches"
-              title="Branches"
-              value="2"
+              title="Subjects"
+              value={teacher?._count.subjects.toString()!}
             />
             <InfoCards
               image="/singleLesson.png"
               alt="lesson"
               title="Lessons"
-              value="21"
+              value={teacher?._count.lessons.toString()!}
             />
             <InfoCards
               image="/singleClass.png"
               alt="Class"
               title="Class"
-              value="5"
+              value={teacher?._count.classes.toString()!}
             />
           </div>
         </div>

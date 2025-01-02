@@ -18,7 +18,7 @@ const UserInfoCard = ({
 
         {data.img && (
           <Image
-            src={data.img}
+            src={data.img || "/noAvatar.png"}
             alt=""
             width={144}
             height={144}
@@ -60,7 +60,7 @@ const UserInfoCard = ({
               height={14}
               className=""
             />
-            <span>{data.email}</span>
+            <span>{data.email || "-"}</span>
           </div>
           <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
             <Image
@@ -70,7 +70,7 @@ const UserInfoCard = ({
               height={14}
               className=""
             />
-            <span>{data.phone}</span>
+            <span>{data.phone || "-"}</span>
           </div>
         </div>
       </div>

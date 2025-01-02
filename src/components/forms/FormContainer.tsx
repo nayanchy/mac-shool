@@ -37,6 +37,7 @@ const FormContainer = async ({ table, type, data, id }: FormModalTypes) => {
       case "lesson":
         break;
       case "student":
+        relatedData = {};
         break;
       case "event":
         break;

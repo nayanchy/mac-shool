@@ -2,8 +2,7 @@
 
 import { clerkClient } from "@clerk/nextjs/server";
 import prisma from "./prisma";
-import { ClassSchema, SubjectSchema, TeacherSchema } from "./utility";
-import { getUserRole } from "./authentication";
+import { ClassSchema, SubjectSchema, TeacherCreateSchema } from "./utility";
 
 type CurrentState = {
   success: boolean;
@@ -164,7 +163,7 @@ export const deleteClass = async (
 };
 export const createTeacher = async (
   currentState: CurrentState,
-  data: TeacherSchema
+  data: TeacherCreateSchema | TeacherCreateSchema
 ) => {
   let state = { success: false, error: false };
   try {
@@ -184,8 +183,8 @@ export const createTeacher = async (
         id: user.id,
         username: data.username,
         email: data.email,
-        name: data.name,
-        surname: data.surname,
+        name: data.name as string,
+        surname: data.surname as string,
         phone: data.phone,
         address: data.address,
         bloodgroup: data.bloodgroup,
@@ -217,17 +216,36 @@ export const createTeacher = async (
 
 export const updateTeacher = async (
   currentState: CurrentState,
-  data: SubjectSchema
+  data: TeacherCreateSchema | TeacherCreateSchema
 ) => {
+  if (!data.id) return { success: false, error: true };
   try {
-    await prisma.subject.update({
+    const client = await clerkClient();
+    const user = await client.users.updateUser(data.id, {
+      username: data.username,
+      firstName: data.name,
+      lastName: data.surname,
+    });
+    await prisma.teacher.update({
       where: {
         id: data.id,
       },
       data: {
+        username: data.username,
+        email: data.email,
         name: data.name,
-        teachers: {
-          set: data.teachers.map((teacherId) => ({ id: teacherId })),
+        surname: data.surname,
+        phone: data.phone,
+        address: data.address,
+        bloodgroup: data.bloodgroup,
+        birthday: data.birthday,
+        sex: data.sex,
+        img: data.img,
+        subjects: {
+          set: data.subjects.map((subjectId) => ({ id: parseInt(subjectId) })),
+        },
+        classes: {
+          set: data.classes.map((classId) => ({ id: parseInt(classId) })),
         },
       },
     });

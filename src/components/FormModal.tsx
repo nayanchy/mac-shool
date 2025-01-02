@@ -89,14 +89,14 @@ const FormModal = ({ table, type, data, id, relatedData }: FormModalTypes) => {
         relatedData={relatedData}
       />
     ),
-    // student: (type, data, handleModal, relatedData) => (
-    //   <StudentForm
-    //     type={type}
-    //     data={data}
-    //     handleModal={handleClick}
-    //     // relatedData={relatedData}
-    //   />
-    // ),
+    student: (type, data, handleModal, relatedData) => (
+      <StudentForm
+        type={type}
+        data={data}
+        handleModal={handleClick}
+        relatedData={relatedData}
+      />
+    ),
     subject: (type, data, handleModal, relatedData) => (
       <SubjectForm
         type={type}
@@ -168,7 +168,7 @@ const FormModal = ({ table, type, data, id, relatedData }: FormModalTypes) => {
       </button>
       {open && (
         <div className="w-screen h-screen absolute top-0 left-0 bg-black bg-opacity-60 flex items-center justify-center z-50 overscroll-none overflow-hidden">
-          <div className="white-rounded w-[90%] md:w-[80%] lg:w-[70%] xl:w-[60%] 2xl:w-[50%] relative">
+          <div className="white-rounded w-[90%] md:w-[80%] lg:w-[70%] xl:w-[60%] 2xl:w-[50%] relative overflow-y-auto max-h-[90vh]">
             <div className="absolute top-2 right-4">
               <button onClick={handleClick}>
                 <Image src="/close.png" alt={type} height={14} width={14} />

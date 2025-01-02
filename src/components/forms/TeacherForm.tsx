@@ -31,14 +31,12 @@ const TeacherForm = ({
   handleModal: () => void;
   relatedData?: any;
 }) => {
-  // console.log(data);
-  // console.log(relatedData);
   const router = useRouter();
   const [state, setState] = useState({
     success: false,
     error: false,
   });
-  const [img, setImg] = useState<any>(data.img);
+  const [img, setImg] = useState<any>(data ? data.img : null);
   const { toast } = useToast();
   const parsedBirthday = data?.birthday ? new Date(data.birthday) : null;
 
@@ -84,13 +82,6 @@ const TeacherForm = ({
           type === "create"
             ? "New Teacher has been created"
             : "Teacher has been updated",
-        description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">
-              {JSON.stringify(values, null, 2)}
-            </code>
-          </pre>
-        ),
       });
       router.refresh();
     } catch (err) {
@@ -128,6 +119,15 @@ const TeacherForm = ({
                 label="Username"
                 placeholder="Username"
                 defaultValue={data?.username}
+              />
+            </div>
+            <div className="hidden">
+              <CustomFormField
+                control={form.control}
+                name="id"
+                label="ID"
+                placeholder="ID"
+                defaultValue={data?.id}
               />
             </div>
             <div className="flex-1">
@@ -333,7 +333,6 @@ const TeacherForm = ({
                   uploadPreset="schoolDashboard"
                   onSuccess={(result, widget) => {
                     setImg(result.info);
-                    console.log(result.info);
                     widget.close();
                   }}
                 >
