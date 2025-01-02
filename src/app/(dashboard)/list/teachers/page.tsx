@@ -1,4 +1,3 @@
-import FormModal from "@/components/FormModal";
 import FormContainer from "@/components/forms/FormContainer";
 import IconButton from "@/components/IconButton";
 import Pagination from "@/components/Pagination";
@@ -23,7 +22,7 @@ const TeacherListPage = async ({
 
   const p = page ? parseInt(page) : 1;
 
-  const { role, userId } = await getUserRole();
+  const { role } = await getUserRole();
 
   // URL Parameter Conditions
   const query: Prisma.TeacherWhereInput = {};

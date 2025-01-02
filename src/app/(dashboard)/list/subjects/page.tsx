@@ -1,4 +1,3 @@
-import FormModal from "@/components/FormModal";
 import FormContainer from "@/components/forms/FormContainer";
 import IconButton from "@/components/IconButton";
 import Pagination from "@/components/Pagination";
@@ -20,7 +19,7 @@ const SubjectsListPage = async ({
   const { page, ...queryParams } = searchParams;
 
   const p = page ? parseInt(page) : 1;
-  const { role, userId } = await getUserRole();
+  const { role } = await getUserRole();
   const query: Prisma.SubjectWhereInput = {};
 
   if (queryParams) {

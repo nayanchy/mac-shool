@@ -1,40 +1,33 @@
 import Image from "next/image";
 import React from "react";
-import FormModal from "./FormModal";
+import { TeacherData } from "@/lib/types";
+import FormContainer from "./forms/FormContainer";
 
-const UserInfoCard = ({ edit }: { edit?: boolean }) => {
+const UserInfoCard = ({
+  edit,
+  data,
+}: {
+  edit?: boolean;
+  data: TeacherData;
+}) => {
+  const formattedBirthday = new Date(data.birthday).toLocaleDateString();
   return (
     <div className="bg-macSky py-6 px-4 rounded-md flex-1 flex gap-4">
       <div className="w-1/3">
-        <FormModal
-          type="update"
-          table="teacher"
-          data={{
-            id: 1,
-            username: "RakibulIslam",
-            email: "Nl0z9@example.com",
-            password: "123456789",
-            firstName: "Rakib",
-            lastName: "Islam",
-            phone: "01712345678",
-            address: "Dhaka, Bangladesh",
-            birthday: "1988-10-14T00:00:00.000Z",
-            bloodGroup: "A+",
-            sex: "male",
-            img: null,
-          }}
-        />
+        <FormContainer type="update" table="teacher" data={data} />
 
-        <Image
-          src="https://images.pexels.com/photos/2381069/pexels-photo-2381069.jpeg?auto=compress&cs=tinysrgb&w=800"
-          alt=""
-          width={144}
-          height={144}
-          className="w-36 h-36 rounded-full object-cover"
-        />
+        {data.img && (
+          <Image
+            src={data.img}
+            alt=""
+            width={144}
+            height={144}
+            className="w-36 h-36 rounded-full object-cover"
+          />
+        )}
       </div>
       <div className="w-2/3 flex flex-col justify-between gap-4">
-        <h2 className="text-xl font-semibold">Nayan Chowdhury</h2>
+        <h2 className="text-xl font-semibold">{`${data.name} ${data.surname}`}</h2>
         <p className="text-sm text-gray-500">
           Lorem ipsum dolor sit amet consectetur adipisicing elit.
         </p>
@@ -57,7 +50,7 @@ const UserInfoCard = ({ edit }: { edit?: boolean }) => {
               height={14}
               className=""
             />
-            <span>October 14, 1988</span>
+            <span>{formattedBirthday}</span>
           </div>
           <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
             <Image
@@ -67,7 +60,7 @@ const UserInfoCard = ({ edit }: { edit?: boolean }) => {
               height={14}
               className=""
             />
-            <span>nayan.1aacl@gmail.com</span>
+            <span>{data.email}</span>
           </div>
           <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
             <Image
@@ -77,7 +70,7 @@ const UserInfoCard = ({ edit }: { edit?: boolean }) => {
               height={14}
               className=""
             />
-            <span>01780154515</span>
+            <span>{data.phone}</span>
           </div>
         </div>
       </div>

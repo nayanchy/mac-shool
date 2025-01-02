@@ -26,8 +26,8 @@ const SubjectForm = ({
   const options = relatedData.teachers;
   const { toast } = useToast();
   const router = useRouter();
-  console.log(data);
-  console.log(relatedData);
+  // console.log(data);
+  // console.log(relatedData);
 
   const teacherIds = data?.teachers?.map(
     (teacher: { id: string }) => teacher.id

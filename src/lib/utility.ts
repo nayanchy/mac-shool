@@ -43,7 +43,7 @@ export const formSchema = z.object({
   //   .nullable(), // Make img optional for now
 });
 
-export const teacherformSchema = z.object({
+const teacherBaseSchema = {
   id: z.string().optional(),
   username: z
     .string()
@@ -54,22 +54,41 @@ export const teacherformSchema = z.object({
     .email({ message: "Invalid email address" })
     .optional()
     .or(z.literal("")),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters long" }),
   name: z.string().min(1, { message: "First name is required" }).optional(),
   surname: z.string().min(1, { message: "Last name is required" }).optional(),
   phone: z.string().optional(),
   address: z.string(),
   bloodgroup: z.string().min(1, { message: "Blood group is required" }),
-  birthday: z.string({ message: "A date of birth is required." }),
+  birthday: z.union([z.string(), z.date()]).transform((val) => {
+    if (val instanceof Date) return val.toISOString();
+    return val;
+  }),
   sex: z.enum(["MALE", "FEMALE"], { message: "Sex is required" }),
-  img: z.string().optional(), // Make img optional for now
+  img: z.string().optional(),
   subjects: z.array(z.string()),
   classes: z.array(z.string()),
+};
+
+// Create schema (requires password)
+export const teacherCreateSchema = z.object({
+  ...teacherBaseSchema,
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters long" }),
 });
 
-export type TeacherSchema = z.infer<typeof teacherformSchema>;
+// Update schema (password is optional)
+export const teacherUpdateSchema = z.object({
+  ...teacherBaseSchema,
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters long" })
+    .optional(),
+});
+
+// Type definitions
+export type TeacherCreateSchema = z.infer<typeof teacherCreateSchema>;
+export type TeacherUpdateSchema = z.infer<typeof teacherUpdateSchema>;
 
 export const subjectFormSchema = z.object({
   id: z.coerce.number().optional(),

@@ -3,6 +3,7 @@
 import { clerkClient } from "@clerk/nextjs/server";
 import prisma from "./prisma";
 import { ClassSchema, SubjectSchema, TeacherSchema } from "./utility";
+import { getUserRole } from "./authentication";
 
 type CurrentState = {
   success: boolean;
@@ -180,7 +181,7 @@ export const createTeacher = async (
     });
     await prisma.teacher.create({
       data: {
-        id: data.id,
+        id: user.id,
         username: data.username,
         email: data.email,
         name: data.name,

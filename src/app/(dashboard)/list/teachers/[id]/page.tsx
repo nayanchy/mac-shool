@@ -1,40 +1,32 @@
 import Announcement from "@/components/Announcement";
 import BigCalendar from "@/components/BigCalendar";
-import FormModal from "@/components/FormModal";
 import InfoCards from "@/components/InfoCards";
 import Performance from "@/components/Performance";
 import UserInfoCard from "@/components/UserInfoCard";
-import { role } from "@/lib/data";
-import Image from "next/image";
+import prisma from "@/lib/prisma";
+import { TeacherData } from "@/lib/types";
 import Link from "next/link";
 import React from "react";
 
-const SingleTeacherPage = () => {
+const SingleTeacherPage = async ({ params }: { params: { id: string } }) => {
+  const teacher = await prisma.teacher.findUnique({
+    where: {
+      id: params.id,
+    },
+    include: {
+      subjects: true,
+      classes: true,
+    },
+  });
+  console.log(teacher);
   return (
     <div className="flex-1 p-4 flex flex-col xl:flex-row gap-4">
       {/* Left */}
       <div className="w-full xl:w-2/3 flex flex-col gap-4">
         {/* Top */}
         <div className="flex flex-col lg:flex-row gap-4">
-          <UserInfoCard />
-          <FormModal
-            type="update"
-            table="teacher"
-            data={{
-              id: 1,
-              username: "RakibulIslam",
-              email: "Nl0z9@example.com",
-              password: "123456789",
-              firstName: "Rakib",
-              lastName: "Islam",
-              phone: "01712345678",
-              address: "Dhaka, Bangladesh",
-              birthday: "1988-10-14T00:00:00.000Z",
-              bloodGroup: "A+",
-              sex: "male",
-              img: null,
-            }}
-          />
+          <UserInfoCard data={teacher as TeacherData} />
+          {/* <FormModal type="update" table="teacher" data={teacher} /> */}
           {/* Small Cards */}
           <div className="flex-1 flex flex-wrap gap-4 justify-between ">
             <InfoCards

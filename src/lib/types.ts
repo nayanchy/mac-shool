@@ -24,3 +24,18 @@ export type FormDefaultProps = {
   handleModal: () => void;
   relatedData?: any;
 };
+
+export type TeacherData = {
+  id: string;
+  username: string;
+  name: string;
+  surname: string;
+  email: string;
+  phone: string;
+  address: string;
+  img: string;
+  bloodgroup: string;
+  sex: string;
+  createdAt: Date;
+  birthday: Date;
+};

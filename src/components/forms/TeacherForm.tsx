@@ -1,6 +1,11 @@
 "user client";
 
-import { teacherformSchema, TeacherSchema } from "@/lib/utility";
+import {
+  teacherCreateSchema,
+  TeacherCreateSchema,
+  TeacherUpdateSchema,
+  teacherUpdateSchema,
+} from "@/lib/utility";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
@@ -15,7 +20,6 @@ import { useRouter } from "next/navigation";
 import { CldUploadWidget } from "next-cloudinary";
 import { ImageIcon } from "lucide-react";
 import Image from "next/image";
-import { clerkClient } from "@clerk/nextjs/server";
 const TeacherForm = ({
   type,
   data,
@@ -27,28 +31,45 @@ const TeacherForm = ({
   handleModal: () => void;
   relatedData?: any;
 }) => {
+  // console.log(data);
+  // console.log(relatedData);
   const router = useRouter();
   const [state, setState] = useState({
     success: false,
     error: false,
   });
-  const [img, setImg] = useState<any>();
+  const [img, setImg] = useState<any>(data.img);
   const { toast } = useToast();
   const parsedBirthday = data?.birthday ? new Date(data.birthday) : null;
-  const form = useForm<TeacherSchema>({
-    resolver: zodResolver(teacherformSchema),
+
+  const subjectIds = data?.subjects?.map((subject: { id: number }) =>
+    String(subject.id)
+  );
+
+  const classIds = data?.classes?.map((classItem: { id: number }) =>
+    String(classItem.id)
+  );
+  const form = useForm<TeacherCreateSchema | TeacherUpdateSchema>({
+    resolver: zodResolver(
+      type === "create" ? teacherCreateSchema : teacherUpdateSchema
+    ),
     defaultValues: {
       ...data,
+      subjects: subjectIds,
+      classes: classIds,
     },
   });
 
-  const onSubmit = async (values: TeacherSchema) => {
+  const onSubmit = async (
+    values: TeacherCreateSchema | TeacherUpdateSchema
+  ) => {
     try {
       const formattedSubjects = values.subjects?.map((id) => parseInt(id, 10));
       const formattedClasses = values.classes?.map((id) => parseInt(id, 10));
 
       const formattedValues = {
         ...values,
+        img: img.secure_url,
         subjects: formattedSubjects,
         classes: formattedClasses,
       };
@@ -59,7 +80,10 @@ const TeacherForm = ({
       setState(await result);
 
       toast({
-        title: "New Teacher has been created",
+        title:
+          type === "create"
+            ? "New Teacher has been created"
+            : "Teacher has been updated",
         description: (
           <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
             <code className="text-white">
@@ -97,17 +121,7 @@ const TeacherForm = ({
             Authentication Information
           </span>
           <div className="flex flex-col md:flex-row gap-2 w-full ">
-            <div className="flex-1 w-1/2">
-              <CustomFormField
-                control={form.control}
-                name="id"
-                label="ID"
-                placeholder="ID"
-                defaultValue={data?.id}
-              />
-            </div>
-
-            <div className="flex-1  w-1/2">
+            <div className="flex-1">
               <CustomFormField
                 control={form.control}
                 name="username"
@@ -116,9 +130,7 @@ const TeacherForm = ({
                 defaultValue={data?.username}
               />
             </div>
-          </div>
-          <div className="flex flex-col md:flex-row gap-2 w-full ">
-            <div className="flex-1 w-1/2">
+            <div className="flex-1">
               <CustomFormField
                 control={form.control}
                 name="email"
@@ -128,16 +140,18 @@ const TeacherForm = ({
                 defaultValue={data?.email}
               />
             </div>
-            <div className="flex-1 w-1/2">
-              <CustomFormField
-                control={form.control}
-                name="password"
-                label="Password"
-                placeholder="Password"
-                type="password"
-                defaultValue={data?.password}
-              />
-            </div>
+            {type === "create" && (
+              <div className="flex-1">
+                <CustomFormField
+                  control={form.control}
+                  name="password"
+                  label="Password"
+                  placeholder="Password"
+                  type="password"
+                  defaultValue={data?.password}
+                />
+              </div>
+            )}
           </div>
           <span className="text-xs text-gray-400 font-medium text-center py-6">
             Subject and Class Selection
@@ -191,7 +205,7 @@ const TeacherForm = ({
                 name="classes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Assign Subjects to the teacher</FormLabel>
+                    <FormLabel>Assign Classes to the teacher</FormLabel>
                     <div className="grid grid-cols-4 gap-y-2 gap-x-4">
                       {relatedData?.classes.map(
                         (option: { id: number; name: string }) => (
@@ -308,7 +322,7 @@ const TeacherForm = ({
               <div className="flex-1 self-end">
                 {img && (
                   <Image
-                    src={img.thumbnail_url}
+                    src={type === "create" ? img.thumbnail_url : img}
                     alt="profile"
                     width={100}
                     height={100}
