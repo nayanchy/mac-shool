@@ -1,5 +1,6 @@
 import Announcement from "@/components/Announcement";
 import BigCalendar from "@/components/BigCalendar";
+import BigCalendarContainer from "@/components/containers/BigCalendarContainer";
 import InfoCards from "@/components/InfoCards";
 import Performance from "@/components/Performance";
 import UserInfoCard from "@/components/UserInfoCard";
@@ -31,7 +32,7 @@ const SingleTeacherPage = async ({ params }: { params: { id: string } }) => {
       <div className="w-full xl:w-2/3 flex flex-col gap-4">
         {/* Top */}
         <div className="flex flex-col lg:flex-row gap-4">
-          <UserInfoCard data={teacher as TeacherData} />
+          <UserInfoCard data={teacher as TeacherData} table="teacher" />
           {/* <FormModal type="update" table="teacher" data={teacher} /> */}
           {/* Small Cards */}
           <div className="flex-1 flex flex-wrap gap-4 justify-between ">
@@ -64,7 +65,7 @@ const SingleTeacherPage = async ({ params }: { params: { id: string } }) => {
         {/* Bottom */}
         <div className="white-rounded h-[800px]">
           <h1 className="text-xl font-semibold">Teacher&apos;s Schedule</h1>
-          <BigCalendar />
+          <BigCalendarContainer type="teacherId" id={teacher?.id!} />
         </div>
       </div>
       {/* Right */}

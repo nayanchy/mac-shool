@@ -86,9 +86,59 @@ export const teacherUpdateSchema = z.object({
     .optional(),
 });
 
-// Type definitions
 export type TeacherCreateSchema = z.infer<typeof teacherCreateSchema>;
 export type TeacherUpdateSchema = z.infer<typeof teacherUpdateSchema>;
+
+const studentBaseSchema = {
+  id: z.string().optional(),
+  username: z
+    .string()
+    .min(3, { message: "Username must be at least 3 characters long" })
+    .max(100, { message: "Username can be at most 100 characters long" }),
+  email: z
+    .string()
+    .email({ message: "Invalid email address" })
+    .optional()
+    .or(z.literal("")),
+  name: z.string().min(1, { message: "First name is required" }).optional(),
+  surname: z.string().min(1, { message: "Last name is required" }).optional(),
+  phone: z.string().optional(),
+  address: z.string(),
+  bloodgroup: z.string().min(1, { message: "Blood group is required" }),
+  birthday: z.union([z.string(), z.date()]).transform((val) => {
+    if (val instanceof Date) return val.toISOString();
+    return val;
+  }),
+  sex: z.enum(["MALE", "FEMALE"], { message: "Sex is required" }),
+  img: z.string().optional(),
+  classId: z.coerce
+    .number({ required_error: "Grade is required" })
+    .min(1, { message: "Enter a valid gradeId" }),
+  parentId: z.string(),
+  gradeId: z.coerce
+    .number({ required_error: "Grade is required" })
+    .min(1, { message: "Enter a valid gradeId" }),
+};
+
+// Create schema (requires password)
+export const studentCreateSchema = z.object({
+  ...studentBaseSchema,
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters long" }),
+});
+
+// Update schema (password is optional)
+export const studentUpdateSchema = z.object({
+  ...studentBaseSchema,
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters long" })
+    .optional(),
+});
+
+export type StudentCreateSchema = z.infer<typeof studentCreateSchema>;
+export type StudentUpdateSchema = z.infer<typeof studentUpdateSchema>;
 
 export const subjectFormSchema = z.object({
   id: z.coerce.number().optional(),

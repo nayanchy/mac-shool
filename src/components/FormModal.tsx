@@ -5,7 +5,12 @@ import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Spinner from "./Spinner";
 import { useFormState } from "react-dom";
-import { deleteClass, deleteSubject, deleteTeacher } from "@/lib/actions";
+import {
+  deleteClass,
+  deleteStudent,
+  deleteSubject,
+  deleteTeacher,
+} from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { FormModalTypes } from "@/lib/types";
@@ -14,7 +19,7 @@ const deleteActionMap = {
   subject: deleteSubject,
   class: deleteClass,
   teacher: deleteTeacher,
-  student: deleteSubject,
+  student: deleteStudent,
   parent: deleteSubject,
   exam: deleteSubject,
   assignment: deleteSubject,

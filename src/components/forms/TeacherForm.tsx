@@ -67,7 +67,7 @@ const TeacherForm = ({
 
       const formattedValues = {
         ...values,
-        img: img.secure_url,
+        img: img?.secure_url,
         subjects: formattedSubjects,
         classes: formattedClasses,
       };
@@ -333,12 +333,18 @@ const TeacherForm = ({
                   uploadPreset="schoolDashboard"
                   onSuccess={(result, widget) => {
                     setImg(result.info);
-                    widget.close();
+                    // widget.close();
                   }}
                 >
                   {({ open }) => {
                     return (
-                      <Button onClick={() => open()} className="w-full">
+                      <Button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          open();
+                        }}
+                        className="w-full"
+                      >
                         <ImageIcon /> Upload Profile Picture
                       </Button>
                     );

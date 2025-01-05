@@ -2,51 +2,74 @@ import Announcement from "@/components/Announcement";
 import BigCalendar from "@/components/BigCalendar";
 import InfoCards from "@/components/InfoCards";
 import Performance from "@/components/Performance";
+import StudentAttendanceCard from "@/components/StudentAttendanceCard";
 import UserInfoCard from "@/components/UserInfoCard";
-import Image from "next/image";
+import prisma from "@/lib/prisma";
+import { StudentData } from "@/lib/types";
 import Link from "next/link";
-import React from "react";
+import { notFound } from "next/navigation";
+import React, { Suspense } from "react";
+import Loading from "../../loading";
+import BigCalendarContainer from "@/components/containers/BigCalendarContainer";
 
-const SingleStudentPage = () => {
+const SingleStudentPage = async ({ params }: { params: { id: string } }) => {
+  const student = await prisma.student.findUnique({
+    where: {
+      id: params.id,
+    },
+    include: {
+      class: {
+        include: {
+          _count: {
+            select: {
+              lessons: true,
+            },
+          },
+        },
+      },
+      grade: true,
+    },
+  });
+
+  if (!student) {
+    return notFound();
+  }
   return (
     <div className="flex-1 p-4 flex flex-col xl:flex-row gap-4">
       {/* Left */}
       <div className="w-full xl:w-2/3 flex flex-col gap-4">
         {/* Top */}
         <div className="flex flex-col lg:flex-row gap-4">
-          <UserInfoCard />
+          <UserInfoCard data={student as StudentData} table="student" />
           {/* Small Cards */}
           <div className="flex-1 flex flex-wrap gap-4 justify-between ">
-            <InfoCards
-              image="/singleAttendance.png"
-              alt="attendance"
-              title="Attendance"
-              value="50%"
-            />
+            <Suspense fallback={<Loading />}>
+              <StudentAttendanceCard id={student.id} />
+            </Suspense>
             <InfoCards
               image="/singleBranch.png"
               alt="Grade"
               title="Grade"
-              value="6th"
+              value={student?.grade?.level.toString() || "-"}
             />
             <InfoCards
               image="/singleLesson.png"
               alt="lesson"
               title="Lessons"
-              value="21"
+              value={student?.class?._count?.lessons.toString() || "-"}
             />
             <InfoCards
               image="/singleClass.png"
               alt="Class Name"
               title="Class Name"
-              value="6A"
+              value={student?.class?.name || "-"}
             />
           </div>
         </div>
         {/* Bottom */}
         <div className="white-rounded h-[800px]">
           <h1 className="text-xl font-semibold">Student&apos;s Schedule</h1>
-          <BigCalendar />
+          <BigCalendarContainer type="classId" id={student?.classId} />
         </div>
       </div>
       {/* Right */}

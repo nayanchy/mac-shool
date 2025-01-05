@@ -9,7 +9,6 @@ const today = new Date();
 const Announcement = async () => {
   const { userId, sessionClaims } = await auth();
   const role = (sessionClaims?.meta as { role?: string })?.role;
-  console.log(userId);
 
   const roleConditions = {
     teacher: { lessons: { some: { teacherId: userId! } } },

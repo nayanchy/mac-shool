@@ -27,7 +27,7 @@ const AssignmentsListPage = async ({
   const { page, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
   const { role, userId } = await getUserRole();
-  console.log(searchParams);
+
   // URL Parameter Conditions
   const query: Prisma.AssignmentWhereInput = {};
   query.lesson = {};

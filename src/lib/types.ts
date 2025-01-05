@@ -39,3 +39,21 @@ export type TeacherData = {
   createdAt: Date;
   birthday: Date;
 };
+
+export type StudentData = {
+  id: string;
+  username: string;
+  name: string;
+  surname: string;
+  email: string;
+  phone: string;
+  address: string;
+  img: string | null;
+  bloodgroup: string;
+  sex: string;
+  createdAt: Date;
+  birthday: Date;
+  gradeId: number;
+  classId: number;
+  parentId: string;
+};

@@ -7,7 +7,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 
 const Navbar = async () => {
   const user: any = await currentUser();
-  // console.log(user);
+
   return (
     <div className="flex items-center justify-end md:justify-between p-4">
       {/* Search Bar */}

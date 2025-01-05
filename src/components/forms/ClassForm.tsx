@@ -29,7 +29,6 @@ const ClassForm = ({
   handleModal: () => void;
   relatedData?: any;
 }) => {
-  console.log(data);
   const { toast } = useToast();
   const router = useRouter();
 
